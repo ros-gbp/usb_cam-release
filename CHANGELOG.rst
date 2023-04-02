@@ -2,84 +2,195 @@
 Changelog for package usb_cam
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.3.7 (2023-03-03)
+0.6.0 (2023-04-02)
 ------------------
-* Merge pull request `#234 <https://github.com/ros-drivers/usb_cam/issues/234>`_ from knorth55/add-maintainer
-  Add Shingo Kitagawa as maintainer
-* add shingo kitagawa as maintainer
-* Merge pull request `#233 <https://github.com/ros-drivers/usb_cam/issues/233>`_ from knorth55/fix-memory-leak
-  fix memory leak in usb_cam.cpp
-* fix memory leak in usb_cam.cpp
-* Merge pull request `#229 <https://github.com/ros-drivers/usb_cam/issues/229>`_ from knorth55/update-readme
-  update readme
-* update readme
-  update budges
-  format md
-  add ros2 branch info
-* Merge pull request `#227 <https://github.com/ros-drivers/usb_cam/issues/227>`_ from knorth55/develop-ci
-  Adds CI protocols
-* Merge pull request `#228 <https://github.com/ros-drivers/usb_cam/issues/228>`_ from knorth55/fix-typo
-  not use LINK libraries
-* change workflows name
-* change workflows name
-* not use LINK libraries
-* add github actions
-* add github actions
-* AUTHORS.md - typo fix
-* Added contributors information
-* Workaround for CMake deprecation warning
-* Fixed library names for pkg-config
-  - Fixed library names in the `pkg-config` section of CMakeLists.txt
-  - Closes `#202 <https://github.com/ros-drivers/usb_cam/issues/202>`_
-* Added maintainer address
-* Added maintainer address
-* Added proper CMake OpenCV package handler
-* Merge pull request `#126 <https://github.com/ros-drivers/usb_cam/issues/126>`_ from benmaidel/feature/unsupported_set_format_options
-  allow cameras that do not support setting format options via VIDIOC_S_FMT
-* Added support for BGR24 pixel format
-  - Added support for OpenCV BRG24 pixel format
-  (supported by Raspberry Pi camera V4L2 kernel drivers)
-  Solution by @romainreignier manually merged by @twdragon
-  - Untested. Merged in favour of the tests made by @flynneva
-  - Closes `#97 <https://github.com/ros-drivers/usb_cam/issues/97>`_
-* Deprecation message workaround for native H.264
-  - Added MJPEG pixel format deprecation reset
-  (solution by @at-wat)
-  - Added native H.264 pixel format deprecation
-  workaround.
-  TODO: Find a way to start H.264 decoding from the keyframe
-  - Added frame parser context for future development
-  - Removed possible memory leak in context allocation
-  (all libav contexts and packets are now released properly)
-  - Closes `#72 <https://github.com/ros-drivers/usb_cam/issues/72>`_
-* Merge branch 'develop' of github.com:ros-drivers/usb_cam into develop
-* Merge pull request `#110 <https://github.com/ros-drivers/usb_cam/issues/110>`_ from rmukhia/develop
-  Add support for cameras with hardware 'h264' encoding.
-* Merge branch 'develop-h264' into develop
-* Cosmetic fix for old repository URLS
-* Merge branch 'develop' into develop
-* Merge pull request `#115 <https://github.com/ros-drivers/usb_cam/issues/115>`_ from lukehutch/develop
-  Suppress libav "deprecated pixel format used" mjpeg warnings
-* Merge pull request `#125 <https://github.com/ros-drivers/usb_cam/issues/125>`_ from benmaidel/feature/YUV420
-  add support for YUV420 (yu12) pixel format
-* Merge pull request `#197 <https://github.com/ros-drivers/usb_cam/issues/197>`_ from twdragon/develop
-  Full support for last FFMPEG
-* Name mismatch fix
-* Full support for last FFMPEG release
-  - Removed deprecated AVPicture API calls
-  - Implemented correct instantiation for
-  AVFrame structures
-  - Minor build fixes
-* Merge branch 'ros-drivers:develop' into develop
-* allow cameras that do not support setting format options via VIDIOC_S_FMT
+* If auto exposure is true, set it
+* Migrate previous pixel formats to new approach
+  - Add M4202RGB pixel format (aka YUV420 to RGB8)
+  - Add Y102MONO8 pixel format (aka MONO10 to MONO8)
+* Update documentation related to supported formats
+  - update doc strings in new pixel format base class
+* Fix linter errors, clean up tests
+  - fix humble and rolling build
+* Implement new pixel_format class structure
+  - implement virtual convert method for new pixel format class
+  - fix MJPEG2RGB conversion logic using new pixel format class
+* Fix typo in workspace path in README
+* fix whitespace around comments
+* fix unused variable error
+* possible fix for timestamp jumping
+* fix code style
+* dont change brightness with default config
+* use v4l2  for "brightness", "contrast", "saturation", "sharpness", "gain", "auto_white_balance",
+  "white_balance", "autoexposure", "exposure", "autofocus", "focus"
+* Contributors: Evan Flynn, john
+
+0.5.0 (2023-01-14)
+------------------
+* Merge pull request `#212 <https://github.com/flynneva/usb_cam/issues/212>`_ from flynneva/203-refactor-usb-cam-library-with-no-ros-deps
+  Improve ros2 rewrite some more
+* Ensure usb_cam lib and node are installed
+* Add missing include to test_usb_cam_lib
+* Rename format enums to make code easier to read
+* Make supported formats a member variable of the UsbCam class
+* Adjust get_image method to return image to reduce required args
+* Use unused arguments in MJPEG2RGB conversion function
+* Treat all compiler warnings as errors to be more strict
+* Improve logging errors for usb_cam lib
+* Fix opencv include path
+* Merge pull request `#210 <https://github.com/flynneva/usb_cam/issues/210>`_ from revanthsenthil/ros2
+  ROS 2 installation instruction typo fix
+* Merge branch 'ros-drivers:ros2' into ros2
+* Merge pull request `#209 <https://github.com/flynneva/usb_cam/issues/209>`_ from flynneva/203-refactor-usb-cam-library-with-no-ros-deps
+  Refactor usb cam library with no ros deps
+* Update README.md
+  resolved error with `apt-get` from `apt get`
+* Add back in missing copyrights
+* Improve supported formats method for UsbCam object
+* Fix MJPEG2RGB conversion function
+* Enable code coverage using lcov
+* Add integration test for usb_cam lib
+* Clean up usb_cam lib, remove rclcpp dep
+* Bump default framerate to 30hz
+* Improve CLIPVALUE method, add unit test for it
+* Fix humble CI name
+* Add some basic unit tests to usb_cam
+* Remove ROS dep from usb_cam by rewriting timestamping of frames
+* Restructure usb_cam code into more digestible pieces
+* Merge pull request `#207 <https://github.com/flynneva/usb_cam/issues/207>`_ from flynneva/fix-compiler-warnings
+  Fix compiler warnings, replace deprecated code
+* Add basic linters to CMake, fix linter errors found
+* Fix compiler warnings, replace deprecated code
+* Merge pull request `#206 <https://github.com/flynneva/usb_cam/issues/206>`_ from flynneva/ros2
+  Add humble to CI
+* Add humble to CI
+* Merge pull request `#177 <https://github.com/flynneva/usb_cam/issues/177>`_ from benmaidel/feature/YUV420_ros2
+  [ros2] add support for YUV420 (yu12) pixel format
+* Merge pull request `#193 <https://github.com/flynneva/usb_cam/issues/193>`_ from mad0x60/patch-1
+* update the deprecated uncompressed command
+  The current ros2 image decompression command produces the following warning because it is deprecated:
+  [WARN] [1662133933.155713605] [rcl]: Found remap rule 'in/compressed:=image_raw/compressed'. This syntax is deprecated. Use '--ros-args --remap in/compressed:=image_raw/compressed' instead.
+  [WARN] [1662133933.155877454] [rcl]: Found remap rule 'out:=image_raw/uncompressed'. This syntax is deprecated. Use '--ros-args --remap out:=image_raw/uncompressed' instead.
+  This change update to match the most recent ROS2 format
+* Merge pull request `#189 <https://github.com/flynneva/usb_cam/issues/189>`_ from flynneva/ros2
+  Suppress libav deprecated pixel format used warnings (backport from #…
+* Suppress libav deprecated pixel format used warnings (backport from `#115 <https://github.com/flynneva/usb_cam/issues/115>`_)
+* Merge branch 'ros2' into feature/YUV420_ros2
+* Merge pull request `#188 <https://github.com/flynneva/usb_cam/issues/188>`_ from krsche/feat/ros2-add-h264-support
+* feat: add color_format param to support yuv422p
+  required for using cams like the Logitech C920 with the h264 pixel_format
+* feat: add h264 support
+* Merge pull request `#185 <https://github.com/flynneva/usb_cam/issues/185>`_ from progtologist/ros2
+  Enabled dynamic reconfiguration of usb_cam_node
+* Added debug print in callback
+  Co-authored-by: Evan Flynn <6157095+flynneva@users.noreply.github.com>
+* Merge pull request `#186 <https://github.com/flynneva/usb_cam/issues/186>`_ from ros-drivers/prep-for-release
+  Prep for release
+* Enabled dynamic reconfiguration of usb_cam_node
+* Merge branch 'ros2' into feature/YUV420_ros2
 * add support for YUV420 (yu12) pixel format
+* Contributors: Andrei Vukolov, Aris Synodinos, Benjamin Maidel, Evan Flynn, Fabian Kirschner, Mohamed Moustafa, Revanth S
+
+0.4.2 (2022-04-25)
+------------------
+* Minor bump for release
+* Merge pull request `#184 <https://github.com/ros-drivers/usb_cam/issues/184>`_ from clalancette/clalancette/cleanups
+* Switch the rolling docker image to use jammy.
+* Add default cases to switches.
+  This just quiets the compiler warnings.
+* Switch xioctl to take an unsigned long request.
+  This matches what ioctl actually takes, and gets rid of a sign
+  comparison warning.
+* Use uint32_t to store image sizes.
+  This matches the v4l2 structures, and ensures we don't get
+  sign warnings when compiling.
+* Merge pull request `#178 <https://github.com/ros-drivers/usb_cam/issues/178>`_ from benmaidel/feature/unsupported_set_format_options_ros2
+  [ros2] allow cameras that do not support setting format options via VIDIOC_S_FMT
+* allow cameras that do not support setting format options via VIDIOC_S_FMT
+* Merge pull request `#170 <https://github.com/ros-drivers/usb_cam/issues/170>`_ from kenji-miyake/fix-small-warnings
+  Fix small warnings
+* Fix -Wreturn-type
+* Fix -Wparentheses
+* Change static functions to inline to fix -Wunused-function
+* Fix -Wunused-parameter
+* Fix -Worder
+* Fix -Wcomment
+* Fix -Wformat
+* add instructions for multiple launches
+* Contributors: Benjamin Maidel, Chris Lalancette, Evan Flynn, Kenji Miyake
+
+0.4.1 (2021-08-08)
+------------------
+* update README, add compression section
+* update package.xml to include image_transport_plugins
+* clean up README instructions
+* update README ros2 run executable name
+* Contributors: Evan Flynn
+
+0.4.0 (2021-07-21)
+------------------
+* bump version for ros2 first release
+* add galactic to ci, closes `#157 <https://github.com/ros-drivers/usb_cam/issues/157>`_
+  update camera name
+* Merge pull request `#158 <https://github.com/ros-drivers/usb_cam/issues/158>`_ from wep21/feature/add_camera_info
+  Feature/add camera info
+* Add sample camera info yaml
+* Add camera info
+* Merge pull request `#156 <https://github.com/ros-drivers/usb_cam/issues/156>`_ from wep21/feature/composable_node
+* Make usb_cam_node composable
+* Merge pull request `#153 <https://github.com/ros-drivers/usb_cam/issues/153>`_ from flynneva/lint/make-utils-file
+* add utils file, fix lint errors
+* Merge pull request `#151 <https://github.com/ros-drivers/usb_cam/issues/151>`_ from flynneva/fix/remove-boost
+* replace boost lexical_cast with snprintf
+* Merge pull request `#149 <https://github.com/ros-drivers/usb_cam/issues/149>`_ from flynneva/fix/update-readme
+  fix readme headers
+* fix readme headers
+* Merge pull request `#148 <https://github.com/ros-drivers/usb_cam/issues/148>`_ from flynneva/update-ros2-readme-and-lint
+  Update ros2 readme and lint
+* fix most lint errors
+* update readme, fix linter errors
+* Merge pull request `#146 <https://github.com/ros-drivers/usb_cam/issues/146>`_ from flynneva/ros2-clean-up
+  Ros2 clean up
+* fix show_image script lag
+* run, launch and params file working
+* add service, install launch, separate header
+* Merge pull request `#139 <https://github.com/ros-drivers/usb_cam/issues/139>`_ from flynneva/cmake-cleanup
+  consolidate srcs, use ament_auto macros, closes `#138 <https://github.com/ros-drivers/usb_cam/issues/138>`_
+* consolidate srcs, use ament_auto macros, closes `#137 <https://github.com/ros-drivers/usb_cam/issues/137>`_ `#138 <https://github.com/ros-drivers/usb_cam/issues/138>`_
+* Merge pull request `#132 <https://github.com/ros-drivers/usb_cam/issues/132>`_ from flynneva/foxy
+  updates for foxy
+* add myself to authors
+* fixing lint errors
+* add ros2 github actions
+* minor updates to foxy
+* adding launch file
+  try to fix low framerate `#103 <https://github.com/ros-drivers/usb_cam/issues/103>`_
+  add ros parameters
+  loading more parameters from parameter server `#103 <https://github.com/ros-drivers/usb_cam/issues/103>`_
+  use argparse to get arguments from command line
+  untested correction to args
+  ignore unknown args
+  set proper default device and look for more bad return values
+  trying to find why framerate is limited to about 8 fps
+  framerate ok for low-exposure settings
+  print list of valid formats `#105 <https://github.com/ros-drivers/usb_cam/issues/105>`_
+* use the v4l2_buffer timestamp if available. `#75 <https://github.com/ros-drivers/usb_cam/issues/75>`_
+  usb_cam.cpp is building but untested `#103 <https://github.com/ros-drivers/usb_cam/issues/103>`_
+  Builds but crashes immediately after running
+  data is getting published, no image shown
+  image shown, frame rate is very slow `#103 <https://github.com/ros-drivers/usb_cam/issues/103>`_
+* move the timestamping closer to when the image was acquired. `#75 <https://github.com/ros-drivers/usb_cam/issues/75>`_
+* Merge pull request `#136 <https://github.com/ros-drivers/usb_cam/issues/136>`_ from flynneva/patch-1
+  add myself as a maintainer for ros2
+* add myself as a maintainer for ros2
 * Merge pull request `#124 <https://github.com/ros-drivers/usb_cam/issues/124>`_ from k-okada/add_noetic
   add noetic .travis.yml
 * add noetic .travis.yml
-* Suppress libav "deprecated pixel format used" mjpeg warnings
-* Updated sample launch file. h264 supported in 'pixel_format' params. A new parameter 'color_format' supports 'yuv422p' and 'yuv420p'
-* Enable h264 encoding to work with cams which supports hardware h264 encoding like Mobius Maxi.
-* Contributors: Andrei Vukolov, Andrey Vukolov, Benjamin Maidel, Evan Flynn, Kei Okada, Luke Hutchison, Raunak Mukhia, Shingo Kitagawa
+* Contributors: Evan Flynn, Kei Okada, Lucas Walter, flynneva, wep21
+
+0.3.7 (2018-10-29)
+------------------
+* ROS2 version
 
 0.3.6 (2017-06-15)
 ------------------

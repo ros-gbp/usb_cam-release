@@ -1,82 +1,105 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 project(usb_cam)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS cv_bridge image_transport roscpp std_msgs std_srvs sensor_msgs camera_info_manager)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-# Find OpenCV
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+endif()
+
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
 find_package(OpenCV REQUIRED)
 
-## pkg-config libraries
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(avcodec libavcodec REQUIRED)
-pkg_check_modules(avutil libavutil REQUIRED)
-pkg_check_modules(swscale libswscale REQUIRED)
+pkg_check_modules(avcodec REQUIRED libavcodec)
+pkg_check_modules(avutil REQUIRED libavutil)
+pkg_check_modules(swscale REQUIRED libswscale)
 
-###################################################
-## Declare things to be passed to other projects ##
-###################################################
+if(EXISTS ${avcodec})
+  message(STATUS "Found libavcodec: ${avcodec}")
+endif()
 
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-)
+if(EXISTS ${avutil})
+  message(STATUS "Found libavutil: ${avutil}")
+endif()
 
-###########
-## Build ##
-###########
-
-include_directories(include
-  ${catkin_INCLUDE_DIRS}
-  ${avcodec_INCLUDE_DIRS}
-  ${swscale_INCLUDE_DIRS}
-  ${avutil_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-)
+if(EXISTS ${swscale})
+  message(STATUS "Found libswscale: ${swscale}")
+endif()
 
 ## Build the USB camera library
-add_library(${PROJECT_NAME} src/usb_cam.cpp)
+## Do not use ament_auto here so as to not link to rclcpp
+add_library(${PROJECT_NAME} SHARED
+  src/usb_cam.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  "include"
+)
+
 target_link_libraries(${PROJECT_NAME}
   ${avcodec_LIBRARIES}
   ${avutil_LIBRARIES}
   ${swscale_LIBRARIES}
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBS}
+  ${OpenCV_LIBRARIES})
+
+ament_export_libraries(${PROJECT_NAME})
+
+## Declare a ROS 2 composible node as a library
+ament_auto_add_library(${PROJECT_NAME}_node SHARED
+  src/usb_cam_node.cpp
 )
 
-## Declare a cpp executable
-add_executable(${PROJECT_NAME}_node nodes/usb_cam_node.cpp)
 target_link_libraries(${PROJECT_NAME}_node
+  ${PROJECT_NAME})
+
+## Use node to generate an executable
+rclcpp_components_register_node(${PROJECT_NAME}_node
+  PLUGIN "usb_cam::UsbCamNode"
+  EXECUTABLE ${PROJECT_NAME}_node_exe
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest)
+
+  # Unit tests
+  ament_add_gtest(test_usb_cam_utils
+    test/test_usb_cam_utils.cpp)
+  target_link_libraries(test_usb_cam_utils
+    ${PROJECT_NAME})
+  ament_add_gtest(test_pixel_formats
+    test/test_pixel_formats.cpp)
+  target_link_libraries(test_pixel_formats
+    ${PROJECT_NAME})
+  # TODO(flynneva): rewrite this test in another PR
+  # Integration tests
+  # ament_add_gtest(test_usb_cam_lib
+  #  test/test_usb_cam_lib.cpp)
+  # target_link_libraries(test_usb_cam_lib
+  #   ${PROJECT_NAME})
+endif()
+
+install(
+  PROGRAMS scripts/show_image.py
+  DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS
   ${PROJECT_NAME}
-  ${avcodec_LIBRARIES}
-  ${avutil_LIBRARIES}
-  ${swscale_LIBRARIES}
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBS}
+  ${PROJECT_NAME}_node
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib
 )
-
-#############
-## Install ##
-#############
-
-## Mark executables and/or libraries for installation
-install(TARGETS ${PROJECT_NAME}_node ${PROJECT_NAME}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-)
-
-## Copy launch files
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  FILES_MATCHING PATTERN "*.launch"
-)
-
-install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+ament_auto_package(
+  INSTALL_TO_SHARE
+    launch
+    config
 )
