@@ -1,3 +1,26 @@
+## usb_cam (foxy) - 0.6.0-1
+
+The packages in the `usb_cam` repository were released into the `foxy` distro by running `/usr/bin/bloom-release --ros-distro foxy --track foxy usb_cam` on `Sun, 02 Apr 2023 18:18:09 -0000`
+
+The `usb_cam` package was released.
+
+Version of package(s) in repository `usb_cam`:
+
+- upstream repository: https://github.com/ros-drivers/usb_cam.git
+- release repository: https://github.com/ros-gbp/usb_cam-release.git
+- rosdistro version: `0.5.0-1`
+- old version: `0.5.0-1`
+- new version: `0.6.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.11.2`
+- catkin_pkg version: `0.5.2`
+- rosdep version: `0.22.1`
+- rosdistro version: `0.9.0`
+- vcstools version: `0.1.42`
+
+
 ## usb_cam (melodic) - 0.3.7-1
 
 The packages in the `usb_cam` repository were released into the `melodic` distro by running `/usr/local/bin/bloom-release usb_cam --rosdistro melodic -y` on `Wed, 22 Mar 2023 21:22:43 -0000`
